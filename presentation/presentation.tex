@@ -1,0 +1,189 @@
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND THEMES
+%----------------------------------------------------------------------------------------
+
+\documentclass{beamer}
+
+\mode<presentation> {
+
+% The Beamer class comes with a number of default slide themes
+% which change the colors and layouts of slides. Below this is a list
+% of all the themes, uncomment each in turn to see what they look like.
+
+%\usetheme{default}
+%\usetheme{AnnArbor}
+%\usetheme{Antibes}
+%\usetheme{Bergen}
+%\usetheme{Berkeley}
+%\usetheme{Berlin}
+%\usetheme{Boadilla}
+%\usetheme{CambridgeUS}
+%\usetheme{Copenhagen}
+%\usetheme{Darmstadt}
+%\usetheme{Dresden}
+%\usetheme{Frankfurt}
+%\usetheme{Goettingen}
+%\usetheme{Hannover}
+%\usetheme{Ilmenau}
+%\usetheme{JuanLesPins}
+%\usetheme{Luebeck}
+%\usetheme{Madrid}
+%\usetheme{Malmoe}
+%\usetheme{Marburg}
+\usetheme{Montpellier}
+%\usetheme{PaloAlto}
+%\usetheme{Pittsburgh}
+%\usetheme{Rochester}
+%\usetheme{Singapore}
+%\usetheme{Szeged}
+%\usetheme{Warsaw}
+
+% As well as themes, the Beamer class has a number of color themes
+% for any slide theme. Uncomment each of these in turn to see how it
+% changes the colors of your current slide theme.
+
+%\usecolortheme{albatross}
+%\usecolortheme{beaver}
+%\usecolortheme{beetle}
+%\usecolortheme{crane}
+%\usecolortheme{dolphin}
+%\usecolortheme{dove}
+%\usecolortheme{fly}
+%\usecolortheme{lily}
+%\usecolortheme{orchid}
+%\usecolortheme{rose}
+%\usecolortheme{seagull}
+%\usecolortheme{seahorse}
+%\usecolortheme{whale}
+%\usecolortheme{wolverine}
+
+%\setbeamertemplate{footline} % To remove the footer line in all slides uncomment this line
+\setbeamertemplate{footline}[page number] % To replace the footer line in all slides with a simple slide count uncomment this line
+
+\setbeamertemplate{navigation symbols}{} % To remove the navigation symbols from the bottom of all slides uncomment this line
+}
+
+\usepackage{graphicx} % Allows including images
+\usepackage{booktabs} % Allows the use of \toprule, \midrule and \bottomrule in tables
+%\usepackage {tikz}
+\usepackage{tkz-graph}
+\usepackage{listings}
+\GraphInit[vstyle = Shade]
+\tikzset{
+  LabelStyle/.style = { rectangle, rounded corners, draw,
+                        minimum width = 2em, fill = yellow!50,
+                        text = red, font = \bfseries },
+  VertexStyle/.append style = { inner sep=5pt,
+                                font = \normalsize\bfseries},
+  EdgeStyle/.append style = {->, bend left} }
+\usetikzlibrary {positioning}
+%\usepackage {xcolor}
+\definecolor {processblue}{cmyk}{0.96,0,0,0}
+%----------------------------------------------------------------------------------------
+%	TITLE PAGE
+%----------------------------------------------------------------------------------------
+
+\title[pi-Sensehat]{Implementing a top-interface for the Pi 3B} % The short title appears at the bottom of every slide, the full title is only on the title page
+
+\author{Group 24} % Your name
+\institute[Introduction to Embedded Systems 2019] % Your institution as it will appear on the bottom of every slide, may be shorthand to save space
+{
+Introduction to Embedded Systems\\ % Your institution for the title page
+\medskip
+}
+\date{1 November 2019} % Date, can be changed to a custom date
+
+\begin{document}
+
+\begin{frame}
+\titlepage % Print the title page as the first slide
+\end{frame}
+
+\begin{frame}
+\frametitle{Overview} % Table of contents slide, comment this block out to remove it
+\tableofcontents % Throughout your presentation, if you choose to use \section{} and \subsection{} commands, these will automatically be printed on this slide as an overview of your presentation
+\end{frame}
+
+%----------------------------------------------------------------------------------------
+%	PRESENTATION SLIDES
+%----------------------------------------------------------------------------------------
+
+%------------------------------------------------
+
+\section{Project Introduction}
+\begin{frame}{Introduction}
+    \begin{itemize}
+				\item data extraction from the kernel interface
+        \item 'top'-interface for the LED
+        \item programs for load-simulation
+    \end{itemize}
+\end{frame}
+\section{Overview}
+\subsection{data extraction from the kernel interface}
+\begin{frame}[fragile]{How can we acquire stats from the cpu?}
+	\begin{itemize}
+		\item pseudo filesystem proc as the kernel interface
+		\item parsing files
+	\end{itemize}
+
+	\begin{lstlisting}
+		fopen("/proc/stat");
+		fgets(buffer);
+		strtok(buffer);
+	\end{lstlisting}
+\end{frame}
+
+\subsection{top-interface for the LED}
+\begin{frame}{How can we display the information on the LED?}
+There are multiple ways of displaying this information on the 8x8 grid. We
+picked a simple approach.
+  \begin{itemize}
+		\item calculate the load (in \%) for every cpu
+		\item set up threshold percentages for each of the 8 lights per row
+		\item iterate through the cpu data and light the corresponding row
+			accordingly
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{How can we display the information on the LED?}
+	\begin{lstlisting}[tabsize=2]
+for(size_t i = 0; i <= MAX_CPU; i++) {
+		perc = cpulist[i]->perc_use;
+
+		if(perc > 0)
+			set_led(i, 0, RGB565_GREEN);
+		if(perc > 12.5)
+			set_led(i, 1 , RGB565_GREEN);
+		[...]
+}
+	\end{lstlisting}
+\end{frame}
+\section{programs for load-simulation}
+\begin{frame}[fragile]{How can we check if our program reacts to changing workload?}
+	We have written a few extra programs that utilize forks and some random
+	calculations to change the workload. 
+
+	This was intended to be controlled by the joystick, but discarded as the 
+	change in the workload is no goal of the program itself.
+	\begin{lstlisting}[tabsize=2]
+	int main(void) {
+		fork();
+		size_t i = 0;
+		while(1)
+			i++;
+	}
+	\end{lstlisting}
+\end{frame}
+\section{future work}
+\begin{frame}{There are still many improvements possible, including:}
+\begin{itemize}
+	\item display of cpu-data on a webserver
+	\item additional problem: proper save of acquired data
+	\item more datasets (e.g. memory load, swap)
+\end{itemize}
+\end{frame}
+\begin{frame}{Interested? Check out the codebase}
+	\url{https://github.com/Lordakius/pi-senseHAT-top}
+\end{frame}
+
+\end{document}
