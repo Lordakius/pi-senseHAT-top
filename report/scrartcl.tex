@@ -1,0 +1,187 @@
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[twoside,twocolumn]{article}
+
+\usepackage[sc]{mathpazo} % Use the Palatino font
+\usepackage[T1]{fontenc} % Use 8-bit encoding that has 256 glyphs
+\linespread{1.05} % Line spacing - Palatino needs more space between lines
+\usepackage{microtype} % Slightly tweak font spacing for aesthetics
+
+\usepackage[english]{babel} % Language hyphenation and typographical rules
+
+\usepackage[hmarginratio=1:1,top=32mm,columnsep=20pt]{geometry} % Document margins
+\usepackage[hang, small,labelfont=bf,up,textfont=it,up]{caption} % Custom captions under/above floats in tables or figures
+\usepackage{booktabs} % Horizontal rules in tables
+
+\usepackage{lettrine} % The lettrine is the first enlarged letter at the beginning of the text
+
+\usepackage{enumitem} % Customized lists
+\setlist[itemize]{noitemsep} % Make itemize lists more compact
+
+\usepackage{abstract} % Allows abstract customization
+\renewcommand{\abstractnamefont}{\normalfont\bfseries} % Set the "Abstract" text to bold
+\renewcommand{\abstracttextfont}{\normalfont\small\itshape} % Set the abstract itself to small italic text
+
+\usepackage{titlesec} % Allows customization of titles
+\renewcommand\thesection{\Roman{section}} % Roman numerals for the sections
+\renewcommand\thesubsection{\roman{subsection}} % roman numerals for subsections
+\titleformat{\section}[block]{\large\scshape\centering}{\thesection.}{1em}{} % Change the look of the section titles
+\titleformat{\subsection}[block]{\large}{\thesubsection.}{1em}{} % Change the look of the section titles
+
+\usepackage{fancyhdr} % Headers and footers
+\pagestyle{fancy} % All pages have headers and footers
+\fancyhead{} % Blank out the default header
+\fancyfoot{} % Blank out the default footer
+\fancyhead[C]{Running title $\bullet$ May 2016 $\bullet$ Vol. XXI, No. 1} % Custom header text
+\fancyfoot[RO,LE]{\thepage} % Custom footer text
+
+\usepackage{titling} % Customizing the title section
+
+\usepackage{hyperref} % For hyperlinks in the PDF
+
+%----------------------------------------------------------------------------------------
+%	TITLE SECTION
+%----------------------------------------------------------------------------------------
+
+\setlength{\droptitle}{-4\baselineskip} % Move the title up
+
+\pretitle{\begin{center}\Huge\bfseries} % Article title formatting
+\posttitle{\end{center}} % Article title closing formatting
+\title{Implementing a top-interface for the SenseHat LED on a Raspberry Pi 3B} % Article title
+\author{%
+\textsc{Group 24} \\[1ex] % Your name
+\normalsize Uppsala University \\ % Your institution
+%\normalsize \href{mailto:john@smith.com}{john@smith.com} % Your email address
+%\and % Uncomment if 2 authors are required, duplicate these 4 lines if more
+%\textsc{Jane Smith}\thanks{Corresponding author} \\[1ex] % Second author's name
+%\normalsize University of Utah \\ % Second author's institution
+%\normalsize \href{mailto:jane@smith.com}{jane@smith.com} % Second author's email address
+}
+\date{\today} % Leave empty to omit a date
+\renewcommand{\maketitlehookd}{%
+\begin{abstract}
+\noindent Monitoring computer systems is an important task for admins and users
+alike. A common tool to display cpu information on UNIX-systems is top. This
+work will present an example implementation of a similar interface for the
+SenseHat LED system, which is installed onto the Raspberry Pi 3. We will argue
+that this display is not well suited for this task by comparing it to a
+web-based solution.
+\end{abstract}
+}
+
+%----------------------------------------------------------------------------------------
+
+\begin{document}
+
+% Print the title
+\maketitle
+
+%----------------------------------------------------------------------------------------
+%	ARTICLE CONTENTS
+%----------------------------------------------------------------------------------------
+
+\section{Introduction}
+
+First we will explain how an UNIX-system (here: Debian) can provide the 
+necessary interfaces to access the relevant information required. Then we will 
+talk about the way top displays this information and how we can utilize the 
+given $8\times8$ grid of the LED. Finally we will compare this implementation
+with a (theoretical) web-based solution and discuss further improvements. 
+
+%------------------------------------------------
+
+\section{Kernel Interface}
+
+Representing (kernel) data is not a new idea. The \textit{proc} filesystem 
+mentioned by Killian\cite{Killian:1984} was used to map address space to files 
+so that processes could access their own image. This was also used to improve 
+debugging techniques as this was a major problem before. Today's systems expand 
+this idea and also introduce other subfilesystems\cite{proc(5)}. We will focus 
+on the \textit{stat}-filesystem, which displays kernel/system statistics.
+
+As everything under UNIX is a file, so is the \textit{proc}-filesystem. To
+access the data we can use any available fileoperations. When the file
+\textit{/proc/stat} is read the kernel updates the file. This means whenever we
+want to read the new state, we will have to reopen the file. An example output
+can be seen on figure 1. %TODO:figure 1 ;)
+
+%------------------------------------------------
+
+\section{The top interface}
+
+Top presents the user with both an overview of the system's resources and a list
+of running processes with their associated values for cputime, memory usage et
+cetera. This is done dynamically so changes made to the system can be observed
+in real time. While this is helpful, the manpage describes it as a limited 
+interactive interface for process manipulation. 
+
+We also want to mention that there are many more implementations,
+\textbf{htop} to name one, which provide similar functionality with a slightly
+different user interface. 
+
+%TODO:add figure of top interface?
+%-------------------------------------------------
+
+\section{SenseHat LED}
+
+Our hardware consist of a Raspberry Pi 3B with a connected SenseHat LED $8\times
+8$ grid and a joystick. We decided to simplify the output to a general overview
+of the systems cpu state. As we have 4 cores, we can read all relevant
+information for each cpu and their sum from \textit{/proc/stat}. We decided to
+utilize one row of the LED for each batch of data, with the first representing the
+sum of all cpus, the second row the first cpu and so on. 
+
+\begin{table}
+\caption{Example table}
+\centering
+\begin{tabular}{llr}
+\toprule
+\multicolumn{2}{c}{Name} \\
+\cmidrule(r){1-2}
+First name & Last Name & Grade \\
+\midrule
+John & Doe & $7.5$ \\
+Richard & Miles & $2$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+\begin{equation}
+\label{eq:emc}
+e = mc^2
+\end{equation}
+
+
+%------------------------------------------------
+
+\section{Discussion}
+
+\subsection{Subsection One}
+
+
+\subsection{Subsection Two}
+
+
+%----------------------------------------------------------------------------------------
+%	REFERENCE LIST
+%----------------------------------------------------------------------------------------
+
+\begin{thebibliography}{99} % Bibliography - this is intentionally simple in this template
+
+\bibitem[Killian, 1984]{Killian:1984}
+T.~J.~ Killian (1984).
+\newblock Processes as Files
+\newblock {\em USENIX Association}, Summer Conference.
+
+\bibitem[proc(5)]{proc(5)}
+Linux man pages
+
+\end{thebibliography}
+
+%----------------------------------------------------------------------------------------
+
+\end{document}
+
