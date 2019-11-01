@@ -14,7 +14,7 @@
 \usepackage[hmarginratio=1:1,top=32mm,columnsep=20pt]{geometry} % Document margins
 \usepackage[hang, small,labelfont=bf,up,textfont=it,up]{caption} % Custom captions under/above floats in tables or figures
 \usepackage{booktabs} % Horizontal rules in tables
-
+\usepackage{listings}
 \usepackage{lettrine} % The lettrine is the first enlarged letter at the beginning of the text
 
 \usepackage{enumitem} % Customized lists
@@ -40,6 +40,16 @@
 \usepackage{titling} % Customizing the title section
 
 \usepackage{hyperref} % For hyperlinks in the PDF
+
+\usepackage{tikz}
+\usetikzlibrary{positioning}	% verbesserte Positionierung der Knoten
+\usetikzlibrary{automata}		% für Automaten (GTI)
+\usetikzlibrary{arrows}
+\usetikzlibrary{shapes}
+\usetikzlibrary{decorations.pathmorphing}
+\usetikzlibrary{decorations.pathreplacing}
+\usetikzlibrary{decorations.shapes}
+\usetikzlibrary{decorations.text}
 
 %----------------------------------------------------------------------------------------
 %	TITLE SECTION
@@ -86,7 +96,7 @@ this setup with a web-based solution.
 First we will explain how an UNIX-system (here: Debian) can provide the 
 necessary interfaces to access the relevant information required. Then we will 
 talk about the way top displays this information and how we can utilize the 
-given $8\times8$ grid of the LED. Finally we will compare this implementation
+given $8\times8$ grid of the LED\@. Finally we will compare this implementation
 with a (theoretical) web-based solution and discuss further improvements. 
 
 %------------------------------------------------
@@ -94,21 +104,18 @@ with a (theoretical) web-based solution and discuss further improvements.
 \section{Kernel Interface}
 
 Representing (kernel) data is not a new idea. The \textit{proc} filesystem 
-mentioned by Killian\cite{Killian:1984} was used to map address space to files 
+mentioned by Killian~\cite{Killian:1984} was used to map address space to files 
 so that processes could access their own image. This was also used to improve 
 debugging techniques as this was a major problem before. Today's systems expand 
-this idea and also introduce other subfilesystems\cite{proc(5)}. We will focus 
+this idea and also introduce other subfilesystems~\cite{proc(5)}. We will focus 
 on the \textit{stat}-filesystem, which displays kernel/system statistics.
 
 As everything under UNIX is a file, so is the \textit{proc}-filesystem. To
-access the data we can use any available fileoperations. When the file
+access the data we can use any available fileoperation. When the file
 \textit{/proc/stat} is read the kernel updates the file. This means whenever we
-want to read the new state, we will have to reopen the file. An example output
-can be seen on figure 1. %TODO:figure 1 ;)
+want to read the new state, we will have to reopen the file.
 
-\begin{figure}[]
-	\caption{example content of \textit{/proc/stat}}
-\end{figure}
+
 %------------------------------------------------
 
 \section{The top interface}
@@ -136,12 +143,71 @@ of the systems cpu state. We have 4 cores and can read all relevant
 information for each cpu and their sum from \textit{/proc/stat}. We decided to
 utilize one row of the LED for each batch of data, with the first representing the
 sum of all cpus, the second row the first cpu and so on. Every light represents
-12.5 \% of cpu load. 
+12.5 \% of cpu usage. An example can be seen in Figure 1. Here our total cpu
+usage (first row) is around 50\% and 2 cores are at full capacity while the
+other cores are idle. Note that the first light on the idle cpu is still lid.
+The decision was made when we first tested our program, as no changes could be
+seen as there was no (noteful) load on any cpu. For the same reason we provide a
+template, which can be run in parallel to the top-program, to simulate an
+artificial work load. 
+
+\begin{figure}
+	\caption{example of total cpu usage of 50 \%}
+\begin{tikzpicture}[-,>=stealth',shorten >=1pt,auto,node distance=0.9cm, semithick]
+	\tikzstyle{every state}=[fill=black,draw=none,text=white]
+
+\node[state, fill=red] (A) {};
+\node[state, fill=red] (B) [right of=A] {};
+\node[state, fill=red] (C) [right of=B] {};
+\node[state, fill=red] (D) [right of=C] {};
+\node[state] (E) [right of=D] {};
+\node[state] (F) [right of=E] {};
+\node[state] (G) [right of=F] {};
+\node[state] (H) [right of=G] {};
+
+\node[state, fill=red] (A1) [below of=A]  {};
+\node[state, fill=red] (B1) [right of=A1] {};
+\node[state, fill=red] (C1) [right of=B1] {};
+\node[state, fill=red] (D1) [right of=C1] {};
+\node[state, fill=red] (E1) [right of=D1] {};
+\node[state, fill=red] (F1) [right of=E1] {};
+\node[state, fill=red] (G1) [right of=F1] {};
+\node[state, fill=red] (H1) [right of=G1] {};
+
+\node[state, fill=red] (A2) [below of=A1]  {};
+\node[state] (B2) [right of=A2] {};
+\node[state] (C2) [right of=B2] {};
+\node[state] (D2) [right of=C2] {};
+\node[state] (E2) [right of=D2] {};
+\node[state] (F2) [right of=E2] {};
+\node[state] (G2) [right of=F2] {};
+\node[state] (H2) [right of=G2] {};
+
+\node[state, fill=red] (A3) [below of=A2]  {};
+\node[state, fill=red] (B3) [right of=A3] {};
+\node[state, fill=red] (C3) [right of=B3] {};
+\node[state, fill=red] (D3) [right of=C3] {};
+\node[state, fill=red] (E3) [right of=D3] {};
+\node[state, fill=red] (F3) [right of=E3] {};
+\node[state, fill=red] (G3) [right of=F3] {};
+\node[state, fill=red] (H3) [right of=G3] {};
+
+\node[state, fill=red] (A4) [below of=A3]  {};
+\node[state] (B4) [right of=A4] {};
+\node[state] (C4) [right of=B4] {};
+\node[state] (D4) [right of=C4] {};
+\node[state] (E4) [right of=D4] {};
+\node[state] (F4) [right of=E4] {};
+\node[state] (G4) [right of=F4] {};
+\node[state] (H4) [right of=G4] {};
+
+\end{tikzpicture}
+\end{figure}
 
 \subsection{Web-server}
 
 Now assuming we install a web server on the system which serves a page showing
-the current load. For simplicity we will assume a static page, generated by some
+the current usage. For simplicity we will assume a static page, generated by some
 php code. While this setup is simple and easy, it is not real-time, as each
 static page represents a snapshot of the system. On the other hand, further
 information can be shown and the user interface is clean and common\footnote{by
@@ -149,12 +215,13 @@ information can be shown and the user interface is clean and common\footnote{by
 
 \section{Results}
 
+%add figure of example output on the LED (TODO) add it to the LED maybe?
 Our LED solution does work. It supplies the required information in an
 understandable and, maybe more important, common way. The web based solution
 does the same, while offering more possibilites in terms of space and design 
-than the limited grid of the LED. 
+than the limited grid of the LED.\@ 
 
-Even though it is critical for such an interface to be in real-time, this web 
+Even though it is critical for such an interface to be in real-time, the web 
 based approach can be used to display the history as graphs for better 
 readability. One could also use a different approach and create a real-time 
 display, altough this requires extensive knowledge in web development. 
@@ -164,13 +231,24 @@ display, altough this requires extensive knowledge in web development.
 \section{Discussion}
 
 The results of the project should be taken with a grain of salt. The final
-decision of the approach should take into account when and where users may have
-to access this data. Is it even necessary to add another interface when one
-could just connect via ssh and run well programmed solutions like \textbf{htop}?
+decision which approach is preferred should take into account when and where 
+users may have to access this data. Is it even necessary to add another 
+interface when one could just connect via ssh and run well programmed solutions 
+like \textbf{htop}? 
+
 Our prototype shows that while being a simple solution, it also omits a lot of
-information which might be necessary for the accessing users, e.g. the name of
-the process that produces the cpu load. Nevertheless, it could help to signal
-that something might be wrong with the system in a figurative way. 
+information which might be necessary for the users, e.g. the name of
+the process that has the highest cpu usage. Nevertheless, it could help to 
+signal that something might be wrong with the system in such a figurative way, 
+so investigation of a possible problem with suitable tools can begin earlier. 
+
+Next to this functional view there is obviously also the fun one can have by
+reading about and implementing these programs. It is also noteworthy that
+understanding basic concepts of the linux kernel (which the
+\textit{proc}-filesystem is a part of) can help understanding our operating
+systems that we use daily. Even if our prototype or any work that resolves out
+of it are never used in a production system, the knowledge gathered are sure to
+be of use. 
 
 %----------------------------------------------------------------------------------------
 %	REFERENCE LIST
