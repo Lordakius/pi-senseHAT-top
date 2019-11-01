@@ -1,5 +1,5 @@
 # Fdb version 3
-["lualatex"] 1572567921 "scrartcl.tex" "scrartcl.pdf" "scrartcl" 1572567921
+["lualatex"] 1572592301 "scrartcl.tex" "scrartcl.pdf" "scrartcl" 1572592302
   "/home/brahms/.texlive2019/texmf-var/luatex-cache/generic/fonts/otl/lmroman10-regular.luc" 1567506469 123154 6920a78da4959385c24e308d7584cd27 ""
   "/opt/texlive/2019/texmf-dist/fonts/tfm/adobe/palatino/pplb8r.tfm" 1136768653 2532 9ad73cf4dd2173a847f2a5f5608e0b9a ""
   "/opt/texlive/2019/texmf-dist/fonts/tfm/adobe/palatino/pplb9e.tfm" 1136768653 5972 8da11a082fb7b0bb20bdef74c1f36ef8 ""
@@ -22,7 +22,6 @@
   "/opt/texlive/2019/texmf-dist/fonts/tfm/public/mathpazo/zplmr7t.tfm" 1136768653 1828 bb8add3bd19426549f9267c88b0cb8bd ""
   "/opt/texlive/2019/texmf-dist/fonts/tfm/public/mathpazo/zplmr7v.tfm" 1136768653 1012 955c4ca523d7827d33db91a33412b048 ""
   "/opt/texlive/2019/texmf-dist/fonts/tfm/public/mathpazo/zplmr7y.tfm" 1136768653 1316 b4037e9c09961a72f8476628774e1ec1 ""
-  "/opt/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb" 1248133631 35752 024fb6c41858982481f6968b5fc26508 ""
   "/opt/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb" 1248133631 32569 5e5ddc8df908dea60932f3c484a54c0d ""
   "/opt/texlive/2019/texmf-dist/fonts/type1/public/fpl/fplrc8a.pfb" 1546638885 62231 6fa2851364e6117779162ea79cb96ef4 ""
   "/opt/texlive/2019/texmf-dist/fonts/type1/urw/palatino/uplb8a.pfb" 1136849748 52406 dad2f72863a03727d5f536c64a69c452 ""
@@ -97,11 +96,11 @@
   "/opt/texlive/2019/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1572536683 127626 3c7012588f95dfe537a3f4430dc1ad06 ""
   "/opt/texlive/2019/texmf-var/tex/generic/config/language.dat" 1559748652 3751 f1ea9ab151e00b85e75eca4ebb95ff15 ""
   "/opt/texlive/2019/texmf-var/web2c/luatex/lualatex.fmt" 1572195220 1398897 20061b48e06e45776fba6e256a333bae ""
-  "scrartcl.aux" 1572567921 1797 9c7dced42a125670237d584488118cd6 "lualatex"
-  "scrartcl.out" 1572567921 822 be897a335b09c60713d4e2179f558d40 "lualatex"
-  "scrartcl.tex" 1572567920 7561 ed69e3d622844e5f34b6ad57c00165ab ""
+  "scrartcl.aux" 1572592301 1863 36254ef2b89528b24425575f12d31ff3 "lualatex"
+  "scrartcl.out" 1572592301 834 f303100923525a474f5fb37a63dbe6f6 "lualatex"
+  "scrartcl.tex" 1572592300 8956 fc96014618330b6145c2e25a5d823c43 ""
   (generated)
-  "scrartcl.aux"
-  "scrartcl.out"
-  "scrartcl.log"
   "scrartcl.pdf"
+  "scrartcl.log"
+  "scrartcl.out"
+  "scrartcl.aux"

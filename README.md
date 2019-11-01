@@ -3,16 +3,10 @@ Implementing a top interface for a SenseHAT-LED addon for the pi3-B
 
 
 # conclusions of design phase
-We will implement 3 distinct programs. The first will acquire all necessary
-information (what exactly has to be decided) and save them in a nice way
-(probably just plain text). 
-
-The second program will then read those files and depending on user-input
-(joystick) output the desired information on the LED. 
-
-The third program is a web server which allows to read the acquired data over
-the network and also manipulating the settings (yet to be discussed, ideally
-setting it on/off, timeframes, etc.). 
+The project consist of a program that reads the file /proc/stat, reads the lines
+for the cpus and outputs them on the connected LED-interface. The code can be
+found under the csrc directory. The presentation and the report for the project
+are in their respective directories. 
 
 # Copyright
 
